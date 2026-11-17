@@ -1,1 +1,16 @@
-﻿:root { --bg: #0E1113; }
+﻿:root {
+  --bg: #0E1113;
+  --surface: #171B1E;
+  --surface-2: #1E2327;
+  --dark: #090B0C;
+  --line: #2A3136;
+  --text: #F4F2EC;
+  --muted: #98A2A8;
+  --volt: #D4FF3A;
+  --bar: #3A464D;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --max-w: 1280px;
+  --pad-x: 80px;
+  --pad-y: 56px;
+}

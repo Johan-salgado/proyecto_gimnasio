@@ -50,7 +50,7 @@ export default function Hoy() {
                 </div>
                 <button
                   className="btn-primary"
-                  onClick={() => navigate('/app/sesion')}
+                  onClick={() => navigate('/app/sesion', { state: { ejercicioId: ej.id } })}
                   style={{ flexShrink: 0 }}
                 >
                   Registrar

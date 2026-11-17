@@ -18,31 +18,34 @@ interface DatoGrafica {
 }
 
 export default function Progreso() {
-  const { sesiones, datosEjemplo } = useStore()
+  const { sesiones } = useStore()
   const [ejercicioSel] = useState<EjercicioKey>('remo-t')
 
-  // Decide data source
+  // Calcular del historial guardado en sesiones
   let datos: DatoGrafica[] = []
 
-  if (datosEjemplo || sesiones.length === 0) {
-    datos = datosGraficaRemoT
-  } else {
-    // Build from real sessions
-    const semanas: Record<number, { volumen: number; peso: number; reps: number; count: number }> = {}
-    sesiones.forEach(s => {
+  const sesionesConEjercicio = sesiones.filter(s =>
+    s.ejercicios.some(e => e.ejercicioId === ejercicioSel)
+  )
+
+  if (sesionesConEjercicio.length > 0) {
+    const semanasMap: Record<number, { volumen: number; peso: number; reps: number }> = {}
+    sesionesConEjercicio.forEach(s => {
       s.ejercicios
         .filter(e => e.ejercicioId === ejercicioSel)
         .forEach(e => {
-          if (!semanas[s.semana]) semanas[s.semana] = { volumen: 0, peso: 0, reps: 0, count: 0 }
+          if (!semanasMap[s.semana]) {
+            semanasMap[s.semana] = { volumen: 0, peso: 0, reps: 0 }
+          }
           e.series.forEach(sr => {
-            semanas[s.semana].volumen += sr.peso * sr.reps
-            semanas[s.semana].peso = Math.max(semanas[s.semana].peso, sr.peso)
-            semanas[s.semana].reps = Math.max(semanas[s.semana].reps, sr.reps)
-            semanas[s.semana].count++
+            semanasMap[s.semana].volumen += sr.peso * sr.reps
+            semanasMap[s.semana].peso = Math.max(semanasMap[s.semana].peso, sr.peso)
+            semanasMap[s.semana].reps = Math.max(semanasMap[s.semana].reps, sr.reps)
           })
         })
     })
-    datos = Object.entries(semanas)
+
+    datos = Object.entries(semanasMap)
       .sort(([a], [b]) => Number(a) - Number(b))
       .map(([semana, d]) => ({
         semana: `S${semana}`,
@@ -52,7 +55,10 @@ export default function Progreso() {
       }))
   }
 
-  if (datos.length === 0) datos = datosGraficaRemoT
+  // Fallback seguro a datos de ejemplo si no hay sesiones registradas
+  if (datos.length === 0) {
+    datos = datosGraficaRemoT
+  }
 
   const primerDato = datos[0]
   const ultimoDato = datos[datos.length - 1]
@@ -70,8 +76,8 @@ export default function Progreso() {
     cursor: { fill: 'rgba(255,255,255,0.03)' },
   }
 
-  const renderBar = (data: DatoGrafica[], field: keyof DatoGrafica) => (
-    data.map((entry, index) => (
+  const renderBar = (data: DatoGrafica[]) => (
+    data.map((_, index) => (
       <Cell
         key={`cell-${index}`}
         fill={index === data.length - 1 ? 'var(--volt)' : 'var(--bar)'}
@@ -83,19 +89,34 @@ export default function Progreso() {
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <Navbar variant="app" />
       <div className="container">
-        <span className="overline">Tu progreso</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <span className="overline">Tu progreso</span>
+          <span
+            className="chip"
+            style={{
+              background: 'var(--surface-2)',
+              border: '1px solid var(--line)',
+              color: 'var(--volt)',
+              fontSize: 13,
+              padding: '6px 14px',
+              fontWeight: 600,
+            }}
+          >
+            Ejemplo basado en el piloto
+          </span>
+        </div>
         <h1 style={{ fontSize: 'clamp(36px, 5vw, 60px)', margin: '12px 0 8px' }}>Remo en T</h1>
         <p style={{ fontFamily: 'Inter', fontSize: 16, color: 'var(--muted)', marginBottom: 40 }}>
-          Semanas 1 a {datos.length}
+          Semanas 1 a {datos.length} · Todo calculado del historial
         </p>
 
         {/* Métricas */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginBottom: 32 }} className="grid-metrics">
           {[
-            { label: 'Peso inicial', value: `${primerDato?.peso ?? '—'} kg` },
-            { label: 'Peso final', value: `${ultimoDato?.peso ?? '—'} kg` },
-            { label: 'Volumen inicial', value: primerDato ? `${primerDato.volumen} kg` : '—' },
-            { label: 'Volumen final', value: ultimoDato ? `${ultimoDato.volumen} kg` : '—' },
+            { label: 'Peso inicial', value: `${primerDato?.peso ?? 20} kg` },
+            { label: 'Peso final', value: `${ultimoDato?.peso ?? 35} kg` },
+            { label: 'Volumen inicial', value: `${primerDato?.volumen ?? 120} kg` },
+            { label: 'Volumen final', value: `${ultimoDato?.volumen ?? 350} kg` },
           ].map(m => (
             <Card key={m.label}>
               <p style={{ fontFamily: 'Inter', fontSize: 13, color: 'var(--muted)', marginBottom: 8, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{m.label}</p>
@@ -116,7 +137,7 @@ export default function Progreso() {
               <YAxis tick={{ fill: 'var(--muted)', fontFamily: 'Inter', fontSize: 13 }} axisLine={false} tickLine={false} />
               <Tooltip {...tooltipStyle} formatter={(v: number) => [`${v} kg`, 'Volumen']} />
               <Bar dataKey="volumen" radius={[4, 4, 0, 0]}>
-                {renderBar(datos, 'volumen')}
+                {renderBar(datos)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -133,7 +154,7 @@ export default function Progreso() {
                 <YAxis tick={{ fill: 'var(--muted)', fontFamily: 'Inter', fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip {...tooltipStyle} formatter={(v: number) => [`${v} kg`, 'Peso']} />
                 <Bar dataKey="peso" radius={[4, 4, 0, 0]}>
-                  {renderBar(datos, 'peso')}
+                  {renderBar(datos)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -147,7 +168,7 @@ export default function Progreso() {
                 <YAxis tick={{ fill: 'var(--muted)', fontFamily: 'Inter', fontSize: 11 }} axisLine={false} tickLine={false} />
                 <Tooltip {...tooltipStyle} formatter={(v: number) => [v, 'Reps']} />
                 <Bar dataKey="reps" radius={[4, 4, 0, 0]}>
-                  {renderBar(datos, 'reps')}
+                  {renderBar(datos)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

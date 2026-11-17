@@ -5,7 +5,7 @@ import Card from '../components/Card'
 
 export default function AppDashboard() {
   const navigate = useNavigate()
-  const { perfil, metodologia, sesiones, semanaActual, datosEjemplo } = useStore()
+  const { perfil, metodologia, sesiones, semanaActual, datosEjemplo, esPremium } = useStore()
 
   const nombre = perfil?.nombre || (datosEjemplo ? 'Juan' : 'Usuario')
   const semanaInfo = metodologia?.semanas.find(s => s.numero === Math.min(semanaActual, 4))
@@ -30,11 +30,12 @@ export default function AppDashboard() {
 
   // Ultima carga press banca
   const ultimaSesionPressBanca = sesiones
+    .filter(s => s.semana <= semanaActual)
     .flatMap(s => s.ejercicios.filter(e => e.ejercicioId === 'press-banca').map(e => ({ semana: s.semana, e })))
     .sort((a, b) => b.semana - a.semana)[0]
   const ultimaCargaBanca = ultimaSesionPressBanca?.e.series[0]?.peso
 
-  const bloqueado = semanaActual >= 7
+  const bloqueado = semanaActual >= 7 && !esPremium
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>

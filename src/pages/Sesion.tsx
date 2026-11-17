@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useStore } from '../store/useStore'
 import type { Serie } from '../types'
 import Navbar from '../components/Navbar'
@@ -9,12 +9,17 @@ import Toast from '../components/Toast'
 
 export default function Sesion() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { metodologia, semanaActual, sesiones, agregarSesion } = useStore()
 
   const diaHoy = metodologia?.calendario[0]
   const semanaInfo = metodologia?.semanas.find(s => s.numero === Math.min(semanaActual, 4))
 
-  const [ejercicioIdx, setEjercicioIdx] = useState(0)
+  const stateEjercicioId = (location.state as { ejercicioId?: string } | undefined)?.ejercicioId
+  const initialIdx = diaHoy?.ejercicios.findIndex(e => e.id === stateEjercicioId)
+  const [ejercicioIdx, setEjercicioIdx] = useState(
+    initialIdx !== undefined && initialIdx >= 0 ? initialIdx : 0
+  )
   const ejercicio = diaHoy?.ejercicios[ejercicioIdx]
 
   const [series, setSeries] = useState<Serie[]>([

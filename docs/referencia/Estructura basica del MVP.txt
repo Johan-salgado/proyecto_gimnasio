@@ -1,0 +1,33 @@
+Es una aplicación que busca construir metodologías para principiantes, para que la persona pueda progresar con el tiempo, con un panel principal donde este lo que debe hacer en el dia, las estadísticas con el tiempo de sus medidas y sus progresos. 
+5 meses. 
+1. La metodología y lo que se debe hacer en el dia, fuentes explicativas en base a la ciencia, con lenguaje simple.
+2. Las estadísticas con el tiempo de sus medidas y progresos
+
+3. aplicando la metodlogia que arroje la app en usuarios principiante, llevándolo con un experto para valide la idea
+4. hacer la aplicación base con los requerimientos minimos y mostrar lo que retorna resultantes a expertos y usuarios
+
+5. Con el progreso de las personas a las que se les aplica las metodologías de la app y la validación de la evidencia científica
+los datos son: todas las métricas de los usuarios, medias y progresos y cantidad de personas a las cuales se les asigna las metodologías con el aplicativo y las personas en un x tiempo a las que les ha funcionado
+
+
+PROBLEMA  Y NECESIDAD:
+1. LA IGNORANCIA EN LOS GIMNASIOS TANTO DE ENTRENADORES COMO DE USUARIOS...
+2. LA NECESIDAD DE BRINDAR EL CONOCIMIENTO Y EL ACOMPAÑAMIENTO EN BASE A CIENCIA Y DATOS DEMOSTRADOS.
+
+PROPUESTA DE VALOR:
+La propuesta de valor son los factores o características que hacen la app única; armar metodologías basadas en evidencia científica, correguir técnicas de ejcucion por medio di IA, llevar un registro de toda la información del usuario, para predecir la rutina adecuada, ejercicios, técnicas que aseguren un avance.
+
+
+MODELOS DE NEGOCIO
+Como van a ganar dinero..
+Cuantos son clientes potenciales: 4 sujetos
+Cuanto gasta?...
+de que tamaño es el mercado...
+NUMEROS: las grafica de resultados de los sujetos
+PLAN DE ACCION Y ESTADO ACTUAL:
+donde estamos: en un mvp de prueba validando que la información de la aplicación sea correcta
+próximos seis meses: Una vez validado, experimentar a nivel practico con usuarios y desarrollas mas características del mvp
+EL EQUIPO: 
+David Valencia: Marketing y publicidad
+Brahian Tenorio: programador 
+Eliu Salgado: 
